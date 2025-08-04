@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Aniversário do Gorilão</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+    overflow-x: hidden;
+    position: relative;
+    height: 100vh;
+  }
+  #preloader {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    z-index: 9999;
+  }
+  #start-screen {
+    display: none;
+    padding-top: 100px;
+    z-index: 10;
+    position: relative;
+  }
+  #content {
+    display: none;
+    padding: 30px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    position: relative;
+    z-index: 10;
+  }
+  #content.ativo {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  h1 {
+    font-size: 3em;
+    color: #000;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 1.5em;
+    color: #444;
+    margin-bottom: 30px;
+  }
+  p {
+    font-size: 1.2em;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto 20px;
+  }
+  img {
+    margin-top: 30px;
+    max-width: 90%;
+    height: auto;
+    border: 5px solid #000;
+    animation: image-bounce 3s ease-in-out infinite;
+  }
+  @keyframes image-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  .local {
+    font-weight: bold;
+    color: #111;
+  }
+  button, .btn {
+    padding: 15px 30px;
+    font-size: 1.4em;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+  }
+  button:hover, .btn:hover {
+    background-color: #444;
+    transform: scale(1.05);
+    box-shadow: 0 0 16px #666;
+  }
+  #start-screen button {
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    }
+  }
+  audio {
+    margin-top: 10px;
+    width: 200px;
+    opacity: 0.6;
+  }
+  #confetti-container, #balloon-container, #firework-container {
+    position: fixed;
+    pointer-events: none;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow: visible;
+    z-index: 5;
+  }
+  .confetti {
+    position: absolute;
+    width: 8px; height: 14px;
+    background-color: red;
+    opacity: 0.8;
+    transform-origin: center;
+    animation: confetti-fall 5s linear infinite, confetti-spin 3s linear infinite;
+  }
+  @keyframes confetti-fall {
+    0% {
+      transform: translateY(-20px) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+  @keyframes confetti-spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+  .balloon {
+    position: absolute;
+    bottom: -100px;
+    width: 40px; height: 60px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0.85;
+    animation: balloon-rise 10s ease-in-out infinite, balloon-sway 4s ease-in-out infinite;
+    animation-delay: 0s !important;
+  }
+  @keyframes balloon-rise {
+    0% { bottom: -100px; }
+    100% { bottom: 110vh; opacity: 0; }
+  }
+  @keyframes balloon-sway {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(15px); }
+  }
+  .firework {
+    position: absolute;
+    border-radius: 50%;
+    animation: firework-explode 800ms ease-out forwards;
+  }
+  @keyframes firework-explode {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(4); opacity: 0; }
+  }
+  .particle {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: particle-move 800ms ease-out forwards;
+  }
+  @keyframes particle-move {
+    to {
+      transform: translate(var(--dx), var(--dy));
+      opacity: 0;
+    }
+  }
+
+  /* BOTÃO CONFIRMAR PRESENÇA CENTRALIZADO E REDUZIDO */
+  .btn-confirmar {
+    display: block;
+    margin: 15px auto 0 auto;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 24px;
+    font-size: 1.1em;
+    cursor: pointer;
+    box-shadow:
+      0 0 5px #ff416c,
+      0 0 10px #ff416c,
+      0 0 15px #ff4b2b,
+      0 0 20px #ff4b2b;
+    transition: all 0.3s ease;
+    user-select: none;
+    text-decoration: none;
+    max-width: 220px;
+    width: auto;
+    text-align: center;
+  }
+  .btn-confirmar:hover {
+    background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    transform: scale(1.1);
+    box-shadow:
+      0 0 8px #ff4b2b,
+      0 0 16px #ff4b2b,
+      0 0 24px #ff416c,
+      0 0 32px #ff416c;
+  }
+</style>
+</head>
+<body>
+  <div id="preloader">Carregando... 🎉</div>
+
+  <div id="confetti-container"></div>
+  <div id="balloon-container"></div>
+  <div id="firework-container"></div>
+
+  <div id="start-screen">
+    <button onclick="iniciarSite()">INICIAR</button>
+  </div>
+
+  <div id="content">
+    <h1>Aniversário do Gorilão 🦍🍻</h1>
+    <audio id="musica" src="imaginacao.mp3" controls></audio>
+
+    <h2>Você está convocado para a revoada do Mano W!</h2>
+
+    <p>Festa marcada. Vem forte e faz acontecer.</p>
+
+    <p class="local">
+      📍 Local:
+      <a href="https://maps.app.goo.gl/QnzWTSUfgEq1AV9c7" target="_blank" rel="noopener noreferrer">
+        R. Constantino Siqueira dos Santos, 181 - Paquetá, BH
+      </a>
+    </p>
+
+    <p>🕕 Início: 16/08 18h</p>
+
+    <p>🍾 Leve a bebida que quiser consumir — aqui todo mundo brinda do seu jeito!</p>
+
+    <!-- BOTÃO CONFIRMAR PRESENÇA AQUI -->
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdTVwouiW_kfGIa6-K291KToZrNDi-XWWKPbIMWNBMyyw9zFg/viewform?usp=header"
+       target="_blank"
+       class="btn-confirmar">
+      Confirmar Presença ✈️
+    </a>
+
+    <img src="gorila.png" alt="Gorilão em festa sobrevoando BH" />
+  </div>
+
+  <script>
+    window.addEventListener("load", function () {
+      setTimeout(() => {
+        document.getElementById("preloader").style.display = "none";
+        document.getElementById("start-screen").style.display = "block";
+        startConfetti();
+        startBalloons();
+      }, 3000);
+    });
+
+    function iniciarSite() {
+      document.getElementById("start-screen").style.display = "none";
+      const content = document.getElementById("content");
+      content.style.display = "block";
+      void content.offsetWidth;
+      content.classList.add("ativo");
+
+      const musica = document.getElementById("musica");
+      if (musica.readyState >= 3) {
+        musica.currentTime = 20;
+        musica.play();
+      } else {
+        musica.addEventListener("canplay", function tocar() {
+          musica.currentTime = 20;
+          musica.play();
+          musica.removeEventListener("canplay", tocar);
+        });
+      }
+
+      document.getElementById("balloon-container").style.display = "block";
+
+      startFireworks(500, 18);
+      setTimeout(() => stopFireworks(), 3000);
+    }
+
+    function startConfetti() {
+      const container = document.getElementById("confetti-container");
+      const colors = ["#E91E63", "#9C27B0", "#2196F3", "#4CAF50", "#FFC107", "#FF5722"];
+      for (let i = 0; i < 50; i++) {
+        const c = document.createElement("div");
+        c.classList.add("confetti");
+        c.style.backgroundColor = colors[i % colors.length];
+        c.style.left = Math.random() * 100 + "vw";
+        container.appendChild(c);
+      }
+    }
+
+    function startBalloons() {
+      const container = document.getElementById("balloon-container");
+      const colors = ["#FF4081", "#E040FB", "#7C4DFF", "#40C4FF", "#00E676", "#FFD740"];
+      container.innerHTML = ""; // limpa balões antes
+      for (let i = 0; i < 20; i++) {
+        const b = document.createElement("div");
+        b.classList.add("balloon");
+        b.style.backgroundColor = colors[i % colors.length];
+        b.style.left = Math.random() * 90 + "vw";
+        b.style.animationDelay = "0s";
+        container.appendChild(b);
+      }
+      container.style.display = "block";
+    }
+
+    let fireworksInterval;
+    function startFireworks(interval = 800, count = 12) {
+      const container = document.getElementById("firework-container");
+      fireworksInterval = setInterval(() => {
+        for (let i = 0; i < count; i++) {
+          createFirework(container);
+        }
+      }, interval);
+    }
+
+    function stopFireworks() {
+      clearInterval(fireworksInterval);
+    }
+
+    function createFirework(container) {
+      const firework = document.createElement("div");
+      firework.classList.add("firework");
+      firework.style.left = `${Math.random() * window.innerWidth}px`;
+      firework.style.top = `${Math.random() * window.innerHeight * 0.7 + window.innerHeight * 0.1}px`;
+      firework.style.width = "12px";
+      firework.style.height = "12px";
+      firework.style.backgroundColor = randomColor();
+      container.appendChild(firework);
+
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement("div");
+        particle.classList.add("particle");
+        particle.style.backgroundColor = randomColor();
+        const angle = (360 / 20) * i;
+        const distance = 70 + Math.random() * 50;
+        const rad = angle * Math.PI / 180;
+        const dx = Math.cos(rad) * distance + "px";
+        const dy = Math.sin(rad) * distance + "px";
+        particle.style.setProperty("--dx", dx);
+        particle.style.setProperty("--dy", dy);
+        particle.style.left = "50%";
+        particle.style.top = "50%";
+        firework.appendChild(particle);
+      }
+
+      setTimeout(() => {
+        container.removeChild(firework);
+      }, 800);
+    }
+
+    function randomColor() {
+      const colors = ["#E91E63", "#9C27B0", "#2196F3", "#4CAF50", "#FFC107", "#FF5722", "#00BCD4"];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+  </script>
+</body>
+</html>

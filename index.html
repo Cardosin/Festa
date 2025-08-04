@@ -181,7 +181,7 @@ window.addEventListener("load", function () {
     document.getElementById("start-screen").style.display = "block";
     startConfetti();
     startBalloons();
-  }, 3000);
+  }, 1500);
 });
 
 document.getElementById("startBtn").addEventListener("click", iniciarSite);
@@ -194,7 +194,7 @@ function iniciarSite() {
   content.classList.add("ativo");
 
   const musica = document.getElementById("musica");
-  musica.currentTime = 20;
+  musica.currentTime = 5;
   musica.play().catch(() => console.log("Interação necessária para reproduzir áudio."));
 
   document.getElementById("balloon-container").style.display = "block";
@@ -278,4 +278,5 @@ function randomColor() {
 </script>
 </body>
 </html>
+
 

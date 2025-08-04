@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Festa Explosiva</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: url('gorila.png') center top/contain no-repeat;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+        #introVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10000;
+        }
+        .ctrl-btn {
+            background: rgba(255, 255, 255, 0.85);
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .ctrl-btn:hover {
+            background: #ff4b2b;
+            color: white;
+        }
+        #skipBtn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff4b2b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 10000;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px #fff; }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px #ff4b2b; }
+            100% { transform: scale(1); box-shadow: 0 0 10px #fff; }
+        }
+
+        #mainContent {
+            display: none;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-big {
+            font-size: 3rem;
+            padding: 40px 80px;
+            border-radius: 60px;
+            background: #fff;
+            color: #ff4b2b;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            animation: pulse 1.2s infinite;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .btn-big:hover {
+            transform: scale(1.2) rotate(-2deg);
+            background: #ffe600;
+            color: #222;
+        }
+
+        /* Modal customizado */
+        .custom-modal .modal-content {
+            background: #fff;
+            color: #222;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.4);
+        }
+        .custom-modal .modal-title {
+            font-size: 1.8rem;
+            color: #ff4b2b;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+        }
+        .custom-modal .modal-body {
+            text-align: center;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #333;
+        }
+        .custom-modal .modal-body strong {
+            color: #ff4b2b;
+        }
+        .custom-modal .modal-footer button {
+            font-size: 1.1rem;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .custom-modal .btn-primary {
+            background: #ff4b2b;
+            border: none;
+            transition: 0.3s;
+        }
+        .custom-modal .btn-primary:hover {
+            background: #ff7849;
+        }
+
+        #confetti-canvas, #balloon-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99999;
+        }
+    </style>
+</head>
+<body>
+
+<div id="preloader">
+    <video id="introVideo" autoplay muted playsinline>
+        <source src="projetox.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos.
+    </video>
+    <button id="skipBtn">⏭ Pular Vídeo</button>
+    <div id="controls">
+        <button id="playPauseBtn" class="ctrl-btn">⏸ Pausar</button>
+        <button id="muteBtn" class="ctrl-btn">🔊 Som</button>
+    </div>
+</div>
+
+<div id="mainContent">
+    <button class="btn-big" data-toggle="modal" data-target="#exampleModal">🎆 Iniciar Festa 🎆</button>
+</div>
+
+<!-- Modal atualizado com links -->
+<div class="modal fade custom-modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">🎉 Festa do Gorilão! 🎉</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        🎉 <strong>Você está convocado para a revoada do Mano W!</strong> 🎉<br><br>
+        🦍 Festa marcada. Vem forte e faz acontecer.<br><br>
+        📍 <strong>Local:</strong> 
+        <a href="https://maps.app.goo.gl/QnzWTSUfgEq1AV9c7"
+           target="_blank" 
+           style="color:#ff4b2b; text-decoration: underline;">
+           Rua Constantino Siqueira dos Santos, 181 - Paquetá, BH
+        </a><br>
+        🗓 <strong>Data:</strong> 16/08<br>
+        ⏰ <strong>Horário:</strong> A partir das 18h<br><br>
+        🍾 Leve a bebida que quiser consumir — aqui todo mundo brinda do seu jeito!<br><br>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary"
+                onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdTVwouiW_kfGIa6-K291KToZrNDi-XWWKPbIMWNBMyyw9zFg/viewform?usp=header', '_blank')">
+                ✅ Confirmar Presença
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+<canvas id="balloon-canvas"></canvas>
+
+<audio id="bgAudio" src="teamo.mp3"></audio>
+<audio id="modalAudio" src="imaginacao.mp3"></audio>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+    const video = document.getElementById("introVideo");
+    const preloader = document.getElementById("preloader");
+    const mainContent = document.getElementById("mainContent");
+    const skipBtn = document.getElementById("skipBtn");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const muteBtn = document.getElementById("muteBtn");
+    const bgAudio = document.getElementById("bgAudio");
+    const modalAudio = document.getElementById("modalAudio");
+    const btnFesta = document.querySelector(".btn-big");
+
+    document.addEventListener("click", () => {
+        if(video.muted){
+            video.muted = false;
+            muteBtn.textContent = "🔊 Som";
+        }
+    }, { once: true });
+
+    video.addEventListener("ended", () => {
+        preloader.style.display = "none";
+        mainContent.style.display = "flex";
+        iniciarMusica();
+    });
+
+    skipBtn.addEventListener("click", () => {
+        video.pause();
+        preloader.style.display = "none";
+        mainContent.style.display = "flex";
+        iniciarMusica();
+    });
+
+    playPauseBtn.addEventListener("click", () => {
+        if(video.paused){
+            video.play();
+            playPauseBtn.textContent = "⏸ Pausar";
+        } else {
+            video.pause();
+            playPauseBtn.textContent = "▶️ Play";
+        }
+    });
+
+    muteBtn.addEventListener("click", () => {
+        video.muted = !video.muted;
+        muteBtn.textContent = video.muted ? "🔇 Mudo" : "🔊 Som";
+    });
+
+    function iniciarMusica(){
+        bgAudio.currentTime = 120;
+        bgAudio.play();
+    }
+
+    btnFesta.addEventListener("click", () => {
+        bgAudio.pause();
+    });
+
+    function soltarConfetes() {
+        var duration = 3 * 1000;
+        var end = Date.now() + duration;
+        (function frame() {
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
+    }
+
+    function soltarBaloes() {
+        const canvas = document.getElementById("balloon-canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let baloes = [];
+        for (let i = 0; i < 20; i++) {
+            baloes.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height + Math.random() * 100,
+                size: 30 + Math.random() * 20,
+                speed: 1 + Math.random() * 2,
+                color: `hsl(${Math.random() * 360}, 70%, 60%)`
+            });
+        }
+
+        function animar() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            baloes.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+                ctx.fillStyle = b.color;
+                ctx.fill();
+                b.y -= b.speed;
+            });
+            requestAnimationFrame(animar);
+        }
+        animar();
+
+        setTimeout(() => ctx.clearRect(0, 0, canvas.width, canvas.height), 4000);
+    }
+
+    $('#exampleModal').on('shown.bs.modal', function () {
+        modalAudio.currentTime = 20; 
+        modalAudio.play();
+        soltarConfetes();
+        soltarBaloes();
+    });
+
+    $('#exampleModal').on('hidden.bs.modal', function () {
+        modalAudio.pause();
+        modalAudio.currentTime = 0;
+    });
+</script>
+
+</body>
+</html>
